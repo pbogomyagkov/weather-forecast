@@ -28,11 +28,6 @@ class Weatherbit
      */
     public $key = '';
 
-    /**
-     * @var Client
-     */
-    protected $client;
-
     public function __construct(array $config = [])
     {
         foreach ($config as $name => $value) {
@@ -72,7 +67,7 @@ class Weatherbit
         }
 
         try {
-            return collect($response->json()['data']);
+            return $response->json()['data'];
         } catch (\Exception $e) {
             return 'n/a';
         }
@@ -88,7 +83,8 @@ class Weatherbit
     {
         $data = $this->dailyForecast($city, $country, $days);
 
-        if (is_a($data, 'Illuminate\Support\Collection')) {
+        if (is_array($data)) {
+            $data = collect($data);
             return $data->pluck('temp')->avg();
         }
 
